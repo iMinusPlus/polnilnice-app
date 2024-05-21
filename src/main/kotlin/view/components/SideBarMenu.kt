@@ -18,7 +18,7 @@ import view.state.MenuState
 @Composable
 @Preview
 fun SideBarMenu(menuState: MutableState<MenuState>) {
-    var currentState by remember { mutableStateOf(menuState) }
+    val currentState by remember { mutableStateOf(menuState) }
     fun handleStateChange(newState: MenuState) {
         currentState.value = newState
     }
@@ -88,15 +88,16 @@ fun SideBarItem(
         throw IllegalArgumentException("iconPath and icon cannot be both null")
     }
 
-    if (iconPath != null) {
-        Row(modifier = Modifier.fillMaxWidth().clickable(onClick = { onStateChange(stateToChangeTo) })) {
-            Icon(painter = painterResource(iconPath), contentDescription = null)
-            Text(text, color = Color.White)
-        }
-    } else if (icon != null) {
-        Row(modifier = Modifier.fillMaxWidth().clickable(onClick = { onStateChange(stateToChangeTo) })) {
-            Icon(imageVector = icon, contentDescription = null)
-            Text(text, color = Color.White)
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .clickable(onClick = { onStateChange(stateToChangeTo) })
+    ) {
+        if (iconPath != null) {
+            Icon(painter = painterResource(iconPath), contentDescription = null, modifier = Modifier.padding(10.dp))
+            Text(text, color = Color.White, modifier = Modifier.padding(10.dp))
+        } else {
+            Icon(imageVector = icon!!, contentDescription = null, modifier = Modifier.padding(10.dp))
+            Text(text, color = Color.White, modifier = Modifier.padding(8.dp))
         }
     }
 }
