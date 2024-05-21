@@ -4,6 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -28,7 +29,7 @@ fun SideBarMenu(menuState: MutableState<MenuState>) {
             .width(200.dp)
             .fillMaxHeight()
             .padding(12.dp)
-            .border(width = 1.dp, color = Color(0xFFd1cdcd))
+            .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
     ) {
         SideBarItem(
             text = "Add charging station",
