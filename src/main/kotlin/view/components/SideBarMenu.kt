@@ -28,7 +28,7 @@ fun SideBarMenu(menuState: MutableState<MenuState>) {
             .width(200.dp)
             .fillMaxHeight()
             .padding(12.dp)
-            .border(width = 1.dp, color = Color(0xFFb3b3b3))
+            .border(width = 1.dp, color = Color(0xFFd1cdcd))
     ) {
         SideBarItem(
             text = "Add charging station",
