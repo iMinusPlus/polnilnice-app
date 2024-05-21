@@ -22,8 +22,14 @@ fun Content(menuState: MutableState<MenuState>) {
             .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
     ) {
         when (menuState.value) {
-            MenuState.CHARGING_STATIONS -> DefaultContent()
-            else -> DefaultContent()
+            MenuState.CHARGING_STATIONS -> StationsContent()
+            MenuState.ADDING_USER -> AddingUsersContent()
+            MenuState.ADDING_STATION -> AddingStationContent()
+            MenuState.ABOUT -> AboutContent()
+            MenuState.USERS -> UsersContent()
+            MenuState.GENERATOR -> GeneratorContent()
+            MenuState.SCRAPER -> ScraperContent()
+            else -> StationsContent()
         }
     }
 }

@@ -33,13 +33,13 @@ fun SideBarMenu(menuState: MutableState<MenuState>) {
     ) {
         SideBarItem(
             text = "Add charging station",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.ADDING_STATION,
             icon = Icons.Default.Add,
             onStateChange = ::handleStateChange
         )
         SideBarItem(
             text = "Add user",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.ADDING_USER,
             icon = Icons.Default.Add,
             onStateChange = ::handleStateChange
         )
@@ -51,26 +51,26 @@ fun SideBarMenu(menuState: MutableState<MenuState>) {
         )
         SideBarItem(
             text = "Users",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.USERS,
             icon = Icons.Default.Person,
             onStateChange = ::handleStateChange
         )
         SideBarItem(
             text = "Scraper",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.SCRAPER,
             icon = Icons.Default.Search,
             onStateChange = ::handleStateChange
         )
         SideBarItem(
             text = "Generator",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.GENERATOR,
             icon = Icons.Default.Build,
             onStateChange = ::handleStateChange
         )
         Spacer(modifier = Modifier.height(30.dp))
         SideBarItem(
             text = "About",
-            stateToChangeTo = MenuState.ADDING,
+            stateToChangeTo = MenuState.ABOUT,
             icon = Icons.Default.Info,
             onStateChange = ::handleStateChange
         )
