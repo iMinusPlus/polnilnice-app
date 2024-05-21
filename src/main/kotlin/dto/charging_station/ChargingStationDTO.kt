@@ -17,5 +17,5 @@ data class ChargingStationDTO(
     var numberOfPoints: Int,
     var statusType: StationStatus,
     var dateLastConfirmed: LocalDate,
-    var comments: List<String>
+    var comments: List<String>? = null
 )
