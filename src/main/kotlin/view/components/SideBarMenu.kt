@@ -1,7 +1,7 @@
 package view.components
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -27,8 +27,8 @@ fun SideBarMenu(menuState: MutableState<MenuState>) {
         modifier = Modifier
             .width(200.dp)
             .fillMaxHeight()
-            .background(Color.Gray)
-            .padding(16.dp)
+            .padding(12.dp)
+            .border(width = 1.dp, color = Color(0xFFb3b3b3))
     ) {
         SideBarItem(
             text = "Add charging station",
@@ -94,10 +94,10 @@ fun SideBarItem(
     ) {
         if (iconPath != null) {
             Icon(painter = painterResource(iconPath), contentDescription = null, modifier = Modifier.padding(10.dp))
-            Text(text, color = Color.White, modifier = Modifier.padding(10.dp))
+            Text(text, modifier = Modifier.padding(10.dp))
         } else {
             Icon(imageVector = icon!!, contentDescription = null, modifier = Modifier.padding(10.dp))
-            Text(text, color = Color.White, modifier = Modifier.padding(8.dp))
+            Text(text, modifier = Modifier.padding(8.dp))
         }
     }
 }
