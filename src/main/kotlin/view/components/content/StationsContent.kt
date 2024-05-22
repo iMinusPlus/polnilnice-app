@@ -49,7 +49,11 @@ fun StationsContent() {
             dateCreated = LocalDate.now(),
             numberOfPoints = 1,
             statusType = StationStatus.FREE,
+            dateLastVerified =  LocalDate.now(),
             dateLastConfirmed = LocalDate.now(),
+            UUID = "test",
+            dateAddedToOurApp = LocalDate.now(),
+            comments = "test"
         )
         val mockStation2 = ChargingStationDTO(
             id = 1,
@@ -70,6 +74,10 @@ fun StationsContent() {
             numberOfPoints = 1,
             statusType = StationStatus.FREE,
             dateLastConfirmed = LocalDate.now(),
+            dateLastVerified =  LocalDate.now(),
+            UUID = "test",
+            dateAddedToOurApp = LocalDate.now(),
+            comments = "test"
         )
 
         chargingStations = listOf(mockStation1, mockStation2).toMutableList()
