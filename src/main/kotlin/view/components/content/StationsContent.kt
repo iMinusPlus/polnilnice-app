@@ -37,7 +37,13 @@ fun StationsContent() {
             usageCost = "test",
             usageTypeID = 1,
             address = AddressDTO(
-                id = 1
+                id = 1,
+                title = "test",
+                town = "test",
+                postcode = "test",
+                country = "test",
+                latitude = "test",
+                longitude = "test"
             ),
             connections = mockConnections,
             dateCreated = LocalDate.now(),
@@ -51,7 +57,13 @@ fun StationsContent() {
             usageCost = "test2",
             usageTypeID = 1,
             address = AddressDTO(
-                id = 1
+                id = 1,
+                title = "test",
+                town = "test",
+                postcode = "test",
+                country = "test",
+                latitude = "test",
+                longitude = "test"
             ),
             connections = mockConnections,
             dateCreated = LocalDate.now(),
