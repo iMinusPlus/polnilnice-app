@@ -1,6 +1,5 @@
 package dto.charging_station
 
-
 data class AddressDTO(
     val id: Int,
     val title: String,

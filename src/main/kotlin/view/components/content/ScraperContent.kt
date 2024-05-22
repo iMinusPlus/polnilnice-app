@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import dto.charging_station.AddressDTO
+import dto.charging_station.ConnectionDTO
+import dto.charging_station.ConnectionTypeDTO
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -136,9 +138,32 @@ fun scrapeFromOpenChargeAPI(url: String) {
             )
         }
 
-        addressList.forEach {
+//        addressList.forEach {
+//            println(it)
+//        }
+
+        val connectionTypesList = mutableListOf<ConnectionTypeDTO>()
+        val connectionDTOList = mutableListOf<ConnectionDTO>()
+        list.forEach {
+            val connections = it.get("Connections").asJsonArray
+            connections.forEach { connection ->
+                val connectionType = connection.asJsonObject.get("ConnectionType").asJsonObject
+                connectionTypesList.add(
+                    ConnectionTypeDTO(
+                        id = connectionType.get("ID")?.asInt ?: 0,
+                        name = if (connectionType.get("FormalName") == null || connectionType.get("FormalName") is JsonNull) "null" else connectionType.get("FormalName").asString,
+                        discontinued = if (connectionType.get("IsDiscontinued") == null || connectionType.get("IsDiscontinued") is JsonNull) false else connectionType.get("IsDiscontinued").asBoolean,
+                        obsolete = if (connectionType.get("IsObsolete") == null || connectionType.get("IsObsolete") is JsonNull) false else connectionType.get("IsObsolete").asBoolean,
+                        title = if (connectionType.get("Title") == null || connectionType.get("Title") is JsonNull) "null" else connectionType.get("Title").asString
+                    )
+                )
+            }
+        }
+
+        connectionTypesList.forEach {
             println(it)
         }
+
     }
 }
 
