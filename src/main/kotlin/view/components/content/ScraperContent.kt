@@ -124,7 +124,7 @@ fun scrapeFromOpenChargeAPI(url: String) {
         val addressList = mutableListOf<AddressDTO>()
         list.forEach {
             val address = it.get("AddressInfo").asJsonObject
-            println(address)
+//            println(address)
             addressList.add(
                 AddressDTO(
                     id = address.get("ID")?.asInt ?: 0,
@@ -151,16 +151,44 @@ fun scrapeFromOpenChargeAPI(url: String) {
                 connectionTypesList.add(
                     ConnectionTypeDTO(
                         id = connectionType.get("ID")?.asInt ?: 0,
-                        name = if (connectionType.get("FormalName") == null || connectionType.get("FormalName") is JsonNull) "null" else connectionType.get("FormalName").asString,
-                        discontinued = if (connectionType.get("IsDiscontinued") == null || connectionType.get("IsDiscontinued") is JsonNull) false else connectionType.get("IsDiscontinued").asBoolean,
-                        obsolete = if (connectionType.get("IsObsolete") == null || connectionType.get("IsObsolete") is JsonNull) false else connectionType.get("IsObsolete").asBoolean,
-                        title = if (connectionType.get("Title") == null || connectionType.get("Title") is JsonNull) "null" else connectionType.get("Title").asString
+                        name = if (connectionType.get("FormalName") == null || connectionType.get("FormalName") is JsonNull) "null" else connectionType.get(
+                            "FormalName"
+                        ).asString,
+                        discontinued = if (connectionType.get("IsDiscontinued") == null || connectionType.get("IsDiscontinued") is JsonNull) false else connectionType.get(
+                            "IsDiscontinued"
+                        ).asBoolean,
+                        obsolete = if (connectionType.get("IsObsolete") == null || connectionType.get("IsObsolete") is JsonNull) false else connectionType.get(
+                            "IsObsolete"
+                        ).asBoolean,
+                        title = if (connectionType.get("Title") == null || connectionType.get("Title") is JsonNull) "null" else connectionType.get(
+                            "Title"
+                        ).asString
+                    )
+                )
+
+//                println(connection)
+                connectionDTOList.add(
+                    ConnectionDTO(
+//                        id = connection.asJsonObject.get("ID")?.asInt ?: 0,
+                        id = if (connection.asJsonObject.get("ID") == null || connection.asJsonObject.get("ID") is JsonNull) 0 else connection.asJsonObject.get("ID").asInt,
+                        connectionType = if (connection.asJsonObject.get("ConnectionType") == null || connection.asJsonObject.get("ConnectionType") is JsonNull) 0 else connection.asJsonObject.get("ConnectionType").asJsonObject.get("ID").asInt,
+                        reference = if (connection.asJsonObject.get("Reference") == null || connection.asJsonObject.get("Reference") is JsonNull) "null" else connection.asJsonObject.get("Reference").asString,
+                        amps = if (connection.asJsonObject.get("Amps") == null || connection.asJsonObject.get("Amps") is JsonNull) 0 else connection.asJsonObject.get("Amps").asInt,
+                        voltage = if (connection.asJsonObject.get("Voltage") == null || connection.asJsonObject.get("Voltage") is JsonNull) 0 else connection.asJsonObject.get("Voltage").asInt,
+                        powerKW = if (connection.asJsonObject.get("PowerKW") == null || connection.asJsonObject.get("PowerKW") is JsonNull) 0 else connection.asJsonObject.get("PowerKW").asInt,
+                        currentType = if (connection.asJsonObject.get("CurrentTypeID") == null || connection.asJsonObject.get("CurrentTypeID") is JsonNull) 0 else connection.asJsonObject.get("CurrentTypeID").asInt,
+                        quantity = if (connection.asJsonObject.get("Quantity") == null || connection.asJsonObject.get("Quantity") is JsonNull) 0 else connection.asJsonObject.get("Quantity").asInt,
+                        comments = if (connection.asJsonObject.get("Comments") == null || connection.asJsonObject.get("Comments") is JsonNull) "null" else connection.asJsonObject.get("Comments").asString
                     )
                 )
             }
         }
 
-        connectionTypesList.forEach {
+//        connectionTypesList.forEach {
+//            println(it)
+//        }
+
+        connectionDTOList.forEach {
             println(it)
         }
 
