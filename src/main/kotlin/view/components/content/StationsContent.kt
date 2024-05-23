@@ -1,36 +1,57 @@
 package view.components.content
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dto.charging_station.AddressDTO
 import dto.charging_station.ChargingStationDTO
 import dto.charging_station.ConnectionDTO
+import dto.charging_station.ConnectionTypeDTO
 import dto.charging_station.enums.StationStatus
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Composable
 @Preview
 fun StationsContent() {
-    //TODO
-
-    var chargingStations = remember { mutableListOf<ChargingStationDTO>() }
+    var chargingStations = remember { mutableStateListOf<ChargingStationDTO>() }
 
     LaunchedEffect(Unit) {
-        //todo
-        var mockConnections = emptyList<ConnectionDTO>()
+        val mockConnection = ConnectionDTO(
+            id = 1,
+            connectionType = ConnectionTypeDTO(
+                id = 1,
+                name = "Connection Type 1",
+                discontinued = true,
+                obsolete = false,
+                title = "ConnectionTitle"
+            ),
+            amps = 1,
+            reference = "reference",
+            voltage = 321,
+            powerKW = 31,
+            currentType = 1,
+            quantity = 3,
+            comments = "comments"
+        )
+
+        val mockConnections = listOf(mockConnection)
         val mockStation1 = ChargingStationDTO(
             id = 1,
             dataProviderID = 1,
@@ -38,10 +59,10 @@ fun StationsContent() {
             usageTypeID = 1,
             address = AddressDTO(
                 id = 1,
-                title = "test",
-                town = "test",
-                postcode = "test",
-                country = "test",
+                title = "FERI polnilnica",
+                town = "Maribor",
+                postcode = "2000",
+                country = "SLovenija",
                 latitude = "test",
                 longitude = "test"
             ),
@@ -62,11 +83,11 @@ fun StationsContent() {
             usageTypeID = 1,
             address = AddressDTO(
                 id = 1,
-                title = "test",
-                town = "test",
-                postcode = "test",
-                country = "test",
-                latitude = "test",
+                title = "title",
+                town = "town",
+                postcode = "2000",
+                country = "slovenija",
+                latitude = "ads",
                 longitude = "test"
             ),
             connections = mockConnections,
@@ -80,25 +101,19 @@ fun StationsContent() {
             comments = "test"
         )
 
-        chargingStations = listOf(mockStation1, mockStation2).toMutableList()
+        chargingStations.clear()
+        chargingStations.addAll(listOf(mockStation1, mockStation2))
     }
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(align = Alignment.Center)
-        ) {
-//            Text("CHARGING STATIONS")
-            LazyColumn {
+            LazyRow {
                 items(chargingStations) { item ->
                     ChargingStationCard(item)
                 }
             }
-        }
     }
 }
 
@@ -106,5 +121,26 @@ fun StationsContent() {
 @Preview
 fun ChargingStationCard(chargingStation: ChargingStationDTO) {
     //Todo
-    Text(text = chargingStation.usageCost)
+    Box(
+        modifier = Modifier
+            .height(300.dp)
+            .width(300.dp)
+            .padding(10.dp)
+            .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
+            .padding(10.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                painter = painterResource("icons/EvCharger.svg"),
+                contentDescription = null,
+                modifier = Modifier.padding(20.dp).size(50.dp),
+                tint = Color(0xFF5c6cfa)
+            )
+            Text(text = chargingStation.address.title, style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+            Text(text = "${chargingStation.address.town}, ${chargingStation.address.country}")
+        }
+    }
 }
