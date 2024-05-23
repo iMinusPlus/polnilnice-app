@@ -3,7 +3,7 @@ package view.components.content
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -70,7 +70,7 @@ fun StationsContent() {
             dateCreated = LocalDate.now(),
             numberOfPoints = 1,
             statusType = StationStatus.FREE,
-            dateLastVerified =  LocalDate.now(),
+            dateLastVerified = LocalDate.now(),
             dateLastConfirmed = LocalDate.now(),
             UUID = "test",
             dateAddedToOurApp = LocalDate.now(),
@@ -95,26 +95,44 @@ fun StationsContent() {
             numberOfPoints = 1,
             statusType = StationStatus.FREE,
             dateLastConfirmed = LocalDate.now(),
-            dateLastVerified =  LocalDate.now(),
+            dateLastVerified = LocalDate.now(),
             UUID = "test",
             dateAddedToOurApp = LocalDate.now(),
             comments = "test"
         )
 
         chargingStations.clear()
-        chargingStations.addAll(listOf(mockStation1, mockStation2))
+        chargingStations.addAll(
+            listOf(
+                mockStation1,
+                mockStation2,
+                mockStation1,
+                mockStation2,
+                mockStation1,
+                mockStation2
+            )
+        )
     }
+    val groupedCards = chargingStations.chunked(2)
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-            LazyRow {
-                items(chargingStations) { item ->
-                    ChargingStationCard(item)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                LazyColumn {
+                    items(groupedCards) { rowItems ->
+                        Row {
+                            rowItems.forEach { item ->
+                                ChargingStationCard(item)
+                            }
+                        }
+                    }
                 }
             }
-    }
+        }
 }
 
 @Composable
@@ -128,6 +146,7 @@ fun ChargingStationCard(chargingStation: ChargingStationDTO) {
             .padding(10.dp)
             .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
             .padding(10.dp)
+            .fillMaxWidth()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -139,7 +158,10 @@ fun ChargingStationCard(chargingStation: ChargingStationDTO) {
                 modifier = Modifier.padding(20.dp).size(50.dp),
                 tint = Color(0xFF5c6cfa)
             )
-            Text(text = chargingStation.address.title, style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp))
+            Text(
+                text = chargingStation.address.title,
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            )
             Text(text = "${chargingStation.address.town}, ${chargingStation.address.country}")
         }
     }
