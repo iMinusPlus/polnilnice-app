@@ -113,26 +113,26 @@ fun StationsContent() {
             )
         )
     }
-    val groupedCards = chargingStations.chunked(2)
 
+    val groupedCards = chargingStations.chunked(2)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                LazyColumn {
-                    items(groupedCards) { rowItems ->
-                        Row {
-                            rowItems.forEach { item ->
-                                ChargingStationCard(item)
-                            }
+            LazyColumn {
+                items(groupedCards) { rowItems ->
+                    Row {
+                        rowItems.forEach { item ->
+                            ChargingStationCard(item)
                         }
                     }
                 }
             }
         }
+    }
 }
 
 @Composable

@@ -25,6 +25,7 @@ fun AddingStationContent() {
                 .wrapContentSize(align = Alignment.Center)
         ) {
             Text("ADD CHARGING STATION")
+            //Todo obrazec
         }
     }
 }
