@@ -1,20 +1,15 @@
 package view.components.content
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role.Companion.Button
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dto.charging_station.enums.StationStatus
-import kotlin.math.exp
 
 @Composable
 @Preview
@@ -46,8 +41,11 @@ fun AddingStationContent() {
 
             //Todo urediti
             Text("SELECT STATUS")
-            Box {
-                Button(onClick = { expanded = !expanded }) {
+            Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Button(
+                    onClick = { expanded = !expanded },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                ) {
                     Text(if (status.isEmpty()) "Select status" else status)
                 }
                 DropdownMenu(
