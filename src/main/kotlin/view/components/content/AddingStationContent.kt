@@ -7,21 +7,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.unit.dp
+import dto.charging_station.enums.StationStatus
+import kotlin.math.exp
 
 @Composable
 @Preview
 fun AddingStationContent() {
     var station = remember { mutableStateOf("") }
     var address = remember { mutableStateOf("") }
+
+    val statusOptions = listOf(StationStatus.FREE, StationStatus.IN_USAGE, StationStatus.IN_REPAIR)
+//    var status = remember { mutableStateOf("") }
+    var status by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
 
     //TODO
     Box(
@@ -37,7 +41,29 @@ fun AddingStationContent() {
             CustomTextField(station, "Enter station")
             Text("ADD ADDRESS")
             CustomTextField(address, "Enter address")
+
             //Todo obrazec
+
+            //Todo urediti
+            Text("SELECT STATUS")
+            Box {
+                Button(onClick = { expanded = !expanded }) {
+                    Text(if (status.isEmpty()) "Select status" else status)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    statusOptions.forEach { option ->
+                        DropdownMenuItem(onClick = {
+                            status = option.name
+                            expanded = false
+                        }) {
+                            Text(option.toString())
+                        }
+                    }
+                }
+            }
         }
     }
 }
