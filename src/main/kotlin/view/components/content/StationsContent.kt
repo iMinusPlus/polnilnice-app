@@ -4,6 +4,8 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -114,7 +116,6 @@ fun StationsContent() {
         )
     }
 
-    val groupedCards = chargingStations.chunked(2)
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -122,15 +123,14 @@ fun StationsContent() {
         Box(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            LazyColumn {
-                items(groupedCards) { rowItems ->
-                    Row {
-                        rowItems.forEach { item ->
-                            ChargingStationCard(item)
-                        }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(200.dp),
+                content = {
+                    items(chargingStations.size) { index ->
+                        ChargingStationCard(chargingStations[index])
                     }
                 }
-            }
+            )
         }
     }
 }
@@ -141,8 +141,6 @@ fun ChargingStationCard(chargingStation: ChargingStationDTO) {
     //Todo
     Box(
         modifier = Modifier
-            .height(300.dp)
-            .width(300.dp)
             .padding(10.dp)
             .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
             .padding(10.dp)
