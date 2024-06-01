@@ -4,6 +4,8 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +39,7 @@ fun ScraperContent() {
     //TODO
 
     val stations = remember { mutableStateOf(listOf<ChargingStationDTO>()) }
+    val isLoading = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -49,12 +52,18 @@ fun ScraperContent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Chose source to scrape data from:")
-            DropDownMenu(stations)
+            DropDownMenu(stations, isLoading)
 
-            stations.value.forEach {
-//                ChargingStationCard(it)
-                station -> Text("Station: $station")
-                Spacer(modifier = Modifier.height(8.dp))
+            if (isLoading.value) { // Add this block
+                Spacer(modifier = Modifier.height(16.dp))
+                CircularProgressIndicator()
+            } else {
+                LazyColumn {
+                    items(stations.value) { station ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Station: $station")
+                    }
+                }
             }
         }
     }
@@ -67,7 +76,7 @@ sealed class FunctionResult {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>) {
+fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: MutableState<Boolean>) {
 
     val functions: Map<String, suspend () -> FunctionResult> = mapOf(
         "OpenChargeMap" to { FunctionResult.ResultA(scrapeFromOpenChargeAPI()) },
@@ -106,6 +115,7 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>) {
                             selected = function
                             isExpanded = false
                             GlobalScope.launch {
+                                isLoading.value = true
                                 val result = function.value.invoke()
                                 when (result) {
                                     is FunctionResult.ResultA -> {
@@ -117,6 +127,7 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>) {
                                         println(result.data)
                                     }
                                 }
+                                isLoading.value = false
                             }
                         }
                     ) {
