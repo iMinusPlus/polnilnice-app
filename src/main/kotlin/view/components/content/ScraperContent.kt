@@ -23,6 +23,7 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import util.CustomJsonParser
@@ -40,6 +41,7 @@ fun ScraperContent() {
 
     val stations = remember { mutableStateOf(listOf<ChargingStationDTO>()) }
     val isLoading = remember { mutableStateOf(false) }
+    val hasLoaded = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -51,19 +53,32 @@ fun ScraperContent() {
                 .wrapContentSize(align = Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Chose source to scrape data from:")
-            DropDownMenu(stations, isLoading)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+
+            ) { // Wrap the dropdown and button in a Row
+                DropDownMenu(stations, isLoading)
+
+                Spacer(modifier = Modifier.width(16.dp)) // Add some space between the dropdown and the button
+
+                Button(onClick = { /* Handle button click */ }, enabled = hasLoaded.value) {
+                    Text("Save")
+                }
+            }
 
             if (isLoading.value) { // Add this block
                 Spacer(modifier = Modifier.height(16.dp))
                 CircularProgressIndicator()
+                hasLoaded.value = false
             } else {
                 LazyColumn {
                     items(stations.value) { station ->
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Station: $station")
+                        StationCard(station)
                     }
                 }
+                hasLoaded.value = true
             }
         }
     }
@@ -74,7 +89,7 @@ sealed class FunctionResult {
     data class ResultB(val data: String) : FunctionResult()
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, DelicateCoroutinesApi::class)
 @Composable
 fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: MutableState<Boolean>) {
 
@@ -88,7 +103,7 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: Mu
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(400.dp)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -116,12 +131,12 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: Mu
                             isExpanded = false
                             GlobalScope.launch {
                                 isLoading.value = true
-                                val result = function.value.invoke()
-                                when (result) {
+                                when (val result = function.value.invoke()) {
                                     is FunctionResult.ResultA -> {
                                         // Handle ResultA
                                         stations.value = result.data
                                     }
+
                                     is FunctionResult.ResultB -> {
                                         // Handle ResultB
                                         println(result.data)
@@ -139,3 +154,62 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: Mu
     }
 }
 
+@Composable
+fun StationCard(station: ChargingStationDTO) {
+//    var id by remember { mutableStateOf(station.id.toString()) }
+    var UUID by remember { mutableStateOf(station.UUID) }
+    var numberOfPoints by remember { mutableStateOf(station.numberOfPoints.toString()) }
+    var statusType by remember { mutableStateOf(station.statusType.toString()) }
+    var dateCreated by remember { mutableStateOf(station.dateCreated.toString()) }
+    var address by remember { mutableStateOf(station.address.toString()) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = 4.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+//            TextField(
+//                value = id,
+//                onValueChange = { id = it },
+//                label = { Text("Station ID") },
+//                modifier = Modifier.fillMaxWidth()
+//            )
+            Text("ID: ${station.id}")
+            TextField(
+                value = UUID,
+                onValueChange = { UUID = it },
+                label = { Text("Station UUID") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = numberOfPoints,
+                onValueChange = { numberOfPoints = it },
+                label = { Text("Number of points") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = statusType,
+                onValueChange = { statusType = it },
+                label = { Text("Station status") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = dateCreated,
+                onValueChange = { dateCreated = it },
+                label = { Text("Station date created") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = address,
+                onValueChange = { address = it },
+                label = { Text("Station address") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            // Add more fields as needed
+        }
+    }
+}
