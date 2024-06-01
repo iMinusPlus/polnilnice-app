@@ -1,8 +1,6 @@
 package view.components.content
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,29 +8,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
-import dto.charging_station.AddressDTO
 import dto.charging_station.ChargingStationDTO
-import dto.charging_station.ConnectionDTO
-import dto.charging_station.ConnectionTypeDTO
-import dto.charging_station.enums.StationStatus
-import io.ktor.client.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import util.CustomJsonParser
 import util.Scraper.scrapeFromDDD
 import util.Scraper.scrapeFromOpenChargeAPI
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 @Preview
@@ -159,9 +141,10 @@ fun StationCard(station: ChargingStationDTO) {
 //    var id by remember { mutableStateOf(station.id.toString()) }
     var UUID by remember { mutableStateOf(station.UUID) }
     var numberOfPoints by remember { mutableStateOf(station.numberOfPoints.toString()) }
-    var statusType by remember { mutableStateOf(station.statusType.toString()) }
+    var usageCost by remember { mutableStateOf(station.usageCost) }
     var dateCreated by remember { mutableStateOf(station.dateCreated.toString()) }
     var address by remember { mutableStateOf(station.address.toString()) }
+    var connections by remember { mutableStateOf(station.connections.toString()) }
 
     Card(
         modifier = Modifier
@@ -192,9 +175,9 @@ fun StationCard(station: ChargingStationDTO) {
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
-                value = statusType,
-                onValueChange = { statusType = it },
-                label = { Text("Station status") },
+                value = usageCost,
+                onValueChange = { usageCost = it },
+                label = { Text("Usage cost") },
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
@@ -206,6 +189,12 @@ fun StationCard(station: ChargingStationDTO) {
             TextField(
                 value = address,
                 onValueChange = { address = it },
+                label = { Text("Station address") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = connections,
+                onValueChange = { connections = it },
                 label = { Text("Station address") },
                 modifier = Modifier.fillMaxWidth()
             )
