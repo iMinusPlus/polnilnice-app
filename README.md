@@ -1,0 +1,1 @@
+# Namizna aplikacija za administracijo elektropolnilnice.eu
