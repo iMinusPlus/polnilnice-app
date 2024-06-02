@@ -3,10 +3,8 @@ package view.components.content
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -19,40 +17,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dto.user.UserDTO
+import kotlinx.coroutines.runBlocking
+import util.UserUtil
 
 @Composable
 @Preview
 fun UsersContent() {
-    var users = remember { mutableStateListOf<UserDTO>() }
+    val users = remember { mutableStateListOf<UserDTO>() }
 
     LaunchedEffect(Unit) {
-        val user1 = UserDTO(
-            id = 1,
-            name = "Gandalf",
-            username = "Saruman's pet",
-            password = "test",
-            email = "forgondor@gmail.com"
-        )
-        val user2 = UserDTO(
-            id = 1,
-            name = "Golum",
-            username = "Ring's pet",
-            password = "test",
-            email = "precisios1231@gmail.com"
-        )
-
-        users.clear()
-        users.addAll(listOf(user1, user2, user2, user2, user1, user2))
+        runBlocking {
+            val fetchedUsers = UserUtil.getAllUsers()
+            users.clear()
+            users.addAll(fetchedUsers)
+        }
     }
 
-    //TODO
-    val groupedCards = users.chunked(2)
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -75,7 +60,6 @@ fun UsersContent() {
 @Composable
 @Preview
 fun UserCard(user: UserDTO) {
-    //todo
     Box(
         modifier = Modifier
             .height(300.dp)
@@ -99,7 +83,7 @@ fun UserCard(user: UserDTO) {
                 text = user.username,
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
             )
-            Text(text = "${user.name}, ${user.email}")
+            Text(text = "${user.username}, ${user.email}")
         }
     }
 }
