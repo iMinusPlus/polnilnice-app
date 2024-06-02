@@ -1,9 +1,9 @@
 package dao
 
 interface DaoCrud<T> {
-    fun getById(id: Int): T?
-    fun getAll(): List<T>
-    fun create(t: T): T
-    fun update(t: T): T
+    suspend fun getById(id: Int): T?
+    suspend fun getAll(): List<T>
+    suspend fun create(t: T): Boolean
+    suspend fun update(t: T): Boolean
     fun delete(id: Int): Boolean
 }

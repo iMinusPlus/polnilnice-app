@@ -21,9 +21,7 @@ data class DatabaseConfig(
 object DatabaseUtil {
 
     private val config = Gson().fromJson(File("config.json").readText(), Config::class.java)
-    private val connectionString = config.database.connectionString
-
-    val client = MongoClient.create(connectionString)
+    val client = MongoClient.create(config.database.connectionString)
     val database = client.getDatabase(config.database.baseName)
 
     suspend fun listAllCollection() {
@@ -32,6 +30,7 @@ object DatabaseUtil {
 
         print("Collection in this database are -----------> ")
         database.listCollectionNames().collect { print(" $it") }
+        println()
     }
 
     suspend fun testDB() {
