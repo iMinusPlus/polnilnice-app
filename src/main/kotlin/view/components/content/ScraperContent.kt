@@ -20,7 +20,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import util.Scraper.scrapeFromDDD
 import util.Scraper.scrapeFromOpenChargeAPI
-import java.time.LocalDate
 
 @Composable
 @Preview
@@ -152,7 +151,6 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
     // These variables are used to hold the current state of the UI and update it when necessary.
     var numberOfPoints by remember { mutableStateOf(station.numberOfPoints) }
     var usageCost by remember { mutableStateOf(station.usageCost) }
-    var dateCreated by remember { mutableStateOf(station.dateCreated) }
     var addressTitle by remember { mutableStateOf(station.address.title.toString()) }
     var addressTown by remember { mutableStateOf(station.address.town.toString()) }
     var addressPostcode by remember { mutableStateOf(station.address.postcode.toString()) }
@@ -198,12 +196,7 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
                 label = { Text("Usage cost") },
                 modifier = Modifier.fillMaxWidth()
             )
-            TextField(
-                value = dateCreated.toString(),
-                onValueChange = { dateCreated = LocalDate.parse(it) },
-                label = { Text("Station date created") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-            )
+            Text("Date created: ${station.dateCreated}")
             // endregion
             Box(
                 modifier = Modifier
@@ -219,37 +212,91 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
                     Text("Address:")
                     TextField(
                         value = addressTitle,
-                        onValueChange = { addressTitle = it },
+                        onValueChange = {
+                            addressTitle = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        title = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station address") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
                         value = addressTown,
-                        onValueChange = { addressTown = it },
+                        onValueChange = {
+                            addressTown = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        town = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station town") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
                         value = addressPostcode,
-                        onValueChange = { addressPostcode = it },
+                        onValueChange = {
+                            addressPostcode = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        postcode = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station postcode") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
                         value = addressCountry,
-                        onValueChange = { addressCountry = it },
+                        onValueChange = {
+                            addressCountry = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        country = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station country") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
                         value = addressLat,
-                        onValueChange = { addressLat = it },
+                        onValueChange = {
+                            addressLat = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        latitude = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station latitude") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
                         value = addressLong,
-                        onValueChange = { addressLong = it },
+                        onValueChange = {
+                            addressLong = it
+                            onStationChange(
+                                station.copy(
+                                    address = station.address.copy(
+                                        longitude = it
+                                    )
+                                )
+                            )
+                        },
                         label = { Text("Station longitude") },
                         modifier = Modifier.fillMaxWidth()
                     )
