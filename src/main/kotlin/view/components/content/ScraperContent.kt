@@ -4,7 +4,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -31,19 +30,14 @@ fun ScraperContent() {
     val hasLoaded = remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(align = Alignment.Center),
+            modifier = Modifier.fillMaxWidth().wrapContentSize(align = Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
 
             ) { // Wrap the dropdown and button in a Row
                 DropDownMenu(stations, isLoading)
@@ -94,50 +88,38 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: Mu
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .width(400.dp)
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.width(400.dp).padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ExposedDropdownMenuBox(
             expanded = isExpanded,
             onExpandedChange = { isExpanded = !isExpanded },
         ) {
-            TextField(
-                value = selected.key,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                }
-            )
+            TextField(value = selected.key, onValueChange = {}, readOnly = true, trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            })
 
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
-            ) {
+            ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
                 functions.forEach { function ->
-                    DropdownMenuItem(
-                        onClick = {
-                            selected = function
-                            isExpanded = false
-                            GlobalScope.launch {
-                                isLoading.value = true
-                                when (val result = function.value.invoke()) {
-                                    is FunctionResult.ResultA -> {
-                                        // Handle ResultA
-                                        stations.value = result.data
-                                    }
-
-                                    is FunctionResult.ResultB -> {
-                                        // Handle ResultB
-                                        println(result.data)
-                                    }
+                    DropdownMenuItem(onClick = {
+                        selected = function
+                        isExpanded = false
+                        GlobalScope.launch {
+                            isLoading.value = true
+                            when (val result = function.value.invoke()) {
+                                is FunctionResult.ResultA -> {
+                                    // Handle ResultA
+                                    stations.value = result.data
                                 }
-                                isLoading.value = false
+
+                                is FunctionResult.ResultB -> {
+                                    // Handle ResultB
+                                    println(result.data)
+                                }
                             }
+                            isLoading.value = false
                         }
-                    ) {
+                    }) {
                         Text(function.key)
                     }
                 }
@@ -159,162 +141,125 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
     var addressLong by remember { mutableStateOf(station.address.longitude) }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp
+        modifier = Modifier.fillMaxWidth().padding(8.dp), elevation = 4.dp
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // region Station fields
             Text("ID: ${station.id}")
-            TextField(
-                value = numberOfPoints.toString(),
-                onValueChange = {
-                    numberOfPoints = it.toInt()
-                    onStationChange(
-                        station.copy(
-                            numberOfPoints = it.toInt()
-                        )
+            TextField(value = numberOfPoints.toString(), onValueChange = {
+                numberOfPoints = it.toInt()
+                onStationChange(
+                    station.copy(
+                        numberOfPoints = it.toInt()
                     )
-                },
-                label = { Text("Number of points") },
-                modifier = Modifier.fillMaxWidth()
+                )
+            }, label = { Text("Number of points") }, modifier = Modifier.fillMaxWidth()
             )
-            TextField(
-                value = usageCost.toString(),
-                onValueChange = {
-                    usageCost = it
-                    onStationChange(
-                        station.copy(
-                            usageCost = it
-                        )
+            TextField(value = usageCost.toString(), onValueChange = {
+                usageCost = it
+                onStationChange(
+                    station.copy(
+                        usageCost = it
                     )
-                },
-                label = { Text("Usage cost") },
-                modifier = Modifier.fillMaxWidth()
+                )
+            }, label = { Text("Usage cost") }, modifier = Modifier.fillMaxWidth()
             )
             Text("Date created: ${station.dateCreated}")
             // endregion
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(.9f)
-                    .border(1.dp, Color.Black)
-                    .padding(8.dp)
+                modifier = Modifier.fillMaxWidth(.9f).border(1.dp, Color.Black).padding(8.dp)
             ) {
 
                 Column(
-                    modifier = Modifier
-                        .padding(8.dp)
+                    modifier = Modifier.padding(8.dp)
                 ) {
                     Text("Address:")
-                    TextField(
-                        value = addressTitle,
-                        onValueChange = {
-                            addressTitle = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        title = it
-                                    )
+                    TextField(value = addressTitle, onValueChange = {
+                        addressTitle = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    title = it
                                 )
                             )
-                        },
-                        label = { Text("Station address") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station address") }, modifier = Modifier.fillMaxWidth()
                     )
-                    TextField(
-                        value = addressTown,
-                        onValueChange = {
-                            addressTown = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        town = it
-                                    )
+                    TextField(value = addressTown, onValueChange = {
+                        addressTown = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    town = it
                                 )
                             )
-                        },
-                        label = { Text("Station town") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station town") }, modifier = Modifier.fillMaxWidth()
                     )
-                    TextField(
-                        value = addressPostcode,
-                        onValueChange = {
-                            addressPostcode = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        postcode = it
-                                    )
+                    TextField(value = addressPostcode, onValueChange = {
+                        addressPostcode = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    postcode = it
                                 )
                             )
-                        },
-                        label = { Text("Station postcode") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station postcode") }, modifier = Modifier.fillMaxWidth()
                     )
-                    TextField(
-                        value = addressCountry,
-                        onValueChange = {
-                            addressCountry = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        country = it
-                                    )
+                    TextField(value = addressCountry, onValueChange = {
+                        addressCountry = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    country = it
                                 )
                             )
-                        },
-                        label = { Text("Station country") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station country") }, modifier = Modifier.fillMaxWidth()
                     )
-                    TextField(
-                        value = addressLat,
-                        onValueChange = {
-                            addressLat = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        latitude = it
-                                    )
+                    TextField(value = addressLat, onValueChange = {
+                        addressLat = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    latitude = it
                                 )
                             )
-                        },
-                        label = { Text("Station latitude") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station latitude") }, modifier = Modifier.fillMaxWidth()
                     )
-                    TextField(
-                        value = addressLong,
-                        onValueChange = {
-                            addressLong = it
-                            onStationChange(
-                                station.copy(
-                                    address = station.address.copy(
-                                        longitude = it
-                                    )
+                    TextField(value = addressLong, onValueChange = {
+                        addressLong = it
+                        onStationChange(
+                            station.copy(
+                                address = station.address.copy(
+                                    longitude = it
                                 )
                             )
-                        },
-                        label = { Text("Station longitude") },
-                        modifier = Modifier.fillMaxWidth()
+                        )
+                    }, label = { Text("Station longitude") }, modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
             Text("Connections:")
             LazyColumn(modifier = Modifier.height(500.dp).border(1.dp, Color.Black)) {
-                items(station.connections) { connection ->
+                itemsIndexed(station.connections) { index, connection ->
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth(.9f)
-                            .padding(8.dp)
-                            .border(1.dp, Color.Black)
+                        modifier = Modifier.fillMaxWidth(.9f).padding(8.dp).border(1.dp, Color.Black)
                     ) {
                         Column {
                             Text("Connection ID: ${connection.id}")
-                            ConnectionCard(connection)
+                            ConnectionCard(connection) { updatedConnection ->
+                                val updatedStation =
+                                    station.copy(connections = station.connections.toMutableList().also {
+                                        it[index] = updatedConnection
+                                    })
+                                onStationChange(updatedStation)
+                            }
                         }
                     }
                 }
@@ -324,7 +269,7 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
 }
 
 @Composable
-fun ConnectionCard(connection: ConnectionDTO) {
+fun ConnectionCard(connection: ConnectionDTO, onConnectionChange: (ConnectionDTO) -> Unit) {
     var id by remember { mutableStateOf(connection.id) }
     var reference by remember { mutableStateOf(connection.reference) }
     var amps by remember { mutableStateOf(connection.amps) }
@@ -336,60 +281,87 @@ fun ConnectionCard(connection: ConnectionDTO) {
     var connectionType by remember { mutableStateOf(connection.connectionType) }
 
     Column {
-        TextField(
-            value = id.toString(),
-            onValueChange = { id = it.toInt() },
-            label = { Text("Connection ID") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = id.toString(), onValueChange = {
+            id = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    id = it.toInt()
+                )
+            )
+        }, label = { Text("Connection ID") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = reference.toString(),
-            onValueChange = { reference = it },
-            label = { Text("Reference (website)") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = reference.toString(), onValueChange = {
+            reference = it
+            onConnectionChange(
+                connection.copy(
+                    reference = it
+                )
+            )
+        }, label = { Text("Reference (website)") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = amps.toString(),
-            onValueChange = { amps = it.toInt() },
-            label = { Text("Amps") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = amps.toString(), onValueChange = {
+            amps = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    amps = it.toInt()
+                )
+            )
+        }, label = { Text("Amps") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = voltage.toString(),
-            onValueChange = { voltage = it.toInt() },
-            label = { Text("Voltage") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = voltage.toString(), onValueChange = {
+            voltage = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    voltage = it.toInt()
+                )
+            )
+        }, label = { Text("Voltage") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = powerKW.toString(),
-            onValueChange = { powerKW = it.toInt() },
-            label = { Text("Power KW") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = powerKW.toString(), onValueChange = {
+            powerKW = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    powerKW = it.toInt()
+                )
+            )
+        }, label = { Text("Power KW") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = currentType.toString(),
-            onValueChange = { currentType = it.toInt() },
-            label = { Text("Current Type") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = currentType.toString(), onValueChange = {
+            currentType = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    currentType = it.toInt()
+                )
+            )
+        }, label = { Text("Current Type") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = quantity.toString(),
-            onValueChange = { quantity = it.toInt() },
-            label = { Text("Quantity") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = quantity.toString(), onValueChange = {
+            quantity = it.toInt()
+            onConnectionChange(
+                connection.copy(
+                    quantity = it.toInt()
+                )
+            )
+        }, label = { Text("Quantity") }, modifier = Modifier.fillMaxWidth()
         )
-        TextField(
-            value = comments,
-            onValueChange = { comments = it },
-            label = { Text("Comments") },
-            modifier = Modifier.fillMaxWidth()
+        TextField(value = comments, onValueChange = {
+            comments = it
+            onConnectionChange(
+                connection.copy(
+                    comments = it
+                )
+            )
+        }, label = { Text("Comments") }, modifier = Modifier.fillMaxWidth()
         )
-        ConnectionTypeCard(connectionType)
+        ConnectionTypeCard(connectionType) { updatedConnectionType ->
+            val updatedConnection = connection.copy(connectionType = updatedConnectionType)
+            onConnectionChange(updatedConnection)
+        }
     }
 }
 
 @Composable
-fun ConnectionTypeCard(connectionType: ConnectionTypeDTO) {
+fun ConnectionTypeCard(connectionType: ConnectionTypeDTO, onConnectionTypeChange: (ConnectionTypeDTO) -> Unit) {
     var name by remember { mutableStateOf(connectionType.name) }
     var discontinued by remember { mutableStateOf(connectionType.discontinued.toString()) }
     var obsolete by remember { mutableStateOf(connectionType.obsolete.toString()) }
@@ -400,13 +372,27 @@ fun ConnectionTypeCard(connectionType: ConnectionTypeDTO) {
             Row {
                 TextField(
                     value = connectionType.name,
-                    onValueChange = { connectionType.name = it },
+                    onValueChange = {
+                        connectionType.name = it
+                        onConnectionTypeChange(
+                            connectionType.copy(
+                                name = it
+                            )
+                        )
+                    },
                     label = { Text("Connection Type") },
                     modifier = Modifier.weight(1f)
                 )
                 TextField(
                     value = connectionType.discontinued.toString(),
-                    onValueChange = { connectionType.discontinued = it.toBoolean() },
+                    onValueChange = {
+                        connectionType.discontinued = it.toBoolean()
+                        onConnectionTypeChange(
+                            connectionType.copy(
+                                discontinued = it.toBoolean()
+                            )
+                        )
+                    },
                     label = { Text("Discontinued") },
                     modifier = Modifier.weight(1f)
                 )
@@ -414,13 +400,27 @@ fun ConnectionTypeCard(connectionType: ConnectionTypeDTO) {
             Row {
                 TextField(
                     value = connectionType.obsolete.toString(),
-                    onValueChange = { connectionType.obsolete = it.toBoolean() },
+                    onValueChange = {
+                        connectionType.obsolete = it.toBoolean()
+                        onConnectionTypeChange(
+                            connectionType.copy(
+                                obsolete = it.toBoolean()
+                            )
+                        )
+                    },
                     label = { Text("Obsolete") },
                     modifier = Modifier.weight(1f)
                 )
                 TextField(
                     value = connectionType.title,
-                    onValueChange = { connectionType.title = it },
+                    onValueChange = {
+                        connectionType.title = it
+                        onConnectionTypeChange(
+                            connectionType.copy(
+                                title = it
+                            )
+                        )
+                    },
                     label = { Text("Title") },
                     modifier = Modifier.weight(1f)
                 )
