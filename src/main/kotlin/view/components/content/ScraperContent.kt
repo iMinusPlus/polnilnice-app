@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import util.Scraper.scrapeFromDDD
 import util.Scraper.scrapeFromOpenChargeAPI
+import java.time.LocalDate
 
 @Composable
 @Preview
@@ -49,7 +51,7 @@ fun ScraperContent() {
 
                 Spacer(modifier = Modifier.width(16.dp)) // Add some space between the dropdown and the button
 
-                Button(onClick = { /* Handle button click */ }, enabled = hasLoaded.value) {
+                Button(onClick = { println(stations) }, enabled = hasLoaded.value) {
                     Text("Save")
                 }
             }
@@ -60,9 +62,14 @@ fun ScraperContent() {
                 hasLoaded.value = false
             } else {
                 LazyColumn {
-                    items(stations.value) { station ->
-                        StationCard(station)
+                    itemsIndexed(stations.value) { index, station ->
+                        StationCard(station) { updatedStation ->
+                            stations.value = stations.value.toMutableList().also {
+                                it[index] = updatedStation
+                            }
+                        }
                     }
+                    println(stations)
                 }
                 hasLoaded.value = true
             }
@@ -141,18 +148,17 @@ fun DropDownMenu(stations: MutableState<List<ChargingStationDTO>>, isLoading: Mu
 }
 
 @Composable
-fun StationCard(station: ChargingStationDTO) {
+fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDTO) -> Unit) {
     // These variables are used to hold the current state of the UI and update it when necessary.
-    var UUID by remember { mutableStateOf(station.UUID) }
-    var numberOfPoints by remember { mutableStateOf(station.numberOfPoints.toString()) }
+    var numberOfPoints by remember { mutableStateOf(station.numberOfPoints) }
     var usageCost by remember { mutableStateOf(station.usageCost) }
-    var dateCreated by remember { mutableStateOf(station.dateCreated.toString()) }
+    var dateCreated by remember { mutableStateOf(station.dateCreated) }
     var addressTitle by remember { mutableStateOf(station.address.title.toString()) }
     var addressTown by remember { mutableStateOf(station.address.town.toString()) }
     var addressPostcode by remember { mutableStateOf(station.address.postcode.toString()) }
     var addressCountry by remember { mutableStateOf(station.address.country.toString()) }
     var addressLat by remember { mutableStateOf(station.address.latitude.toString()) }
-    var addressLong by remember { mutableStateOf(station.address.longitude.toString()) }
+    var addressLong by remember { mutableStateOf(station.address.longitude) }
 
     Card(
         modifier = Modifier
@@ -167,20 +173,34 @@ fun StationCard(station: ChargingStationDTO) {
             // region Station fields
             Text("ID: ${station.id}")
             TextField(
-                value = numberOfPoints,
-                onValueChange = { numberOfPoints = it },
+                value = numberOfPoints.toString(),
+                onValueChange = {
+                    numberOfPoints = it.toInt()
+                    onStationChange(
+                        station.copy(
+                            numberOfPoints = it.toInt()
+                        )
+                    )
+                },
                 label = { Text("Number of points") },
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
-                value = usageCost,
-                onValueChange = { usageCost = it },
+                value = usageCost.toString(),
+                onValueChange = {
+                    usageCost = it
+                    onStationChange(
+                        station.copy(
+                            usageCost = it
+                        )
+                    )
+                },
                 label = { Text("Usage cost") },
                 modifier = Modifier.fillMaxWidth()
             )
             TextField(
-                value = dateCreated,
-                onValueChange = { dateCreated = it },
+                value = dateCreated.toString(),
+                onValueChange = { dateCreated = LocalDate.parse(it) },
                 label = { Text("Station date created") },
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             )
@@ -258,56 +278,56 @@ fun StationCard(station: ChargingStationDTO) {
 
 @Composable
 fun ConnectionCard(connection: ConnectionDTO) {
-    var id by remember { mutableStateOf(connection.id.toString()) }
+    var id by remember { mutableStateOf(connection.id) }
     var reference by remember { mutableStateOf(connection.reference) }
-    var amps by remember { mutableStateOf(connection.amps.toString()) }
-    var voltage by remember { mutableStateOf(connection.voltage.toString()) }
-    var powerKW by remember { mutableStateOf(connection.powerKW.toString()) }
-    var currentType by remember { mutableStateOf(connection.currentType.toString()) }
-    var quantity by remember { mutableStateOf(connection.quantity.toString()) }
+    var amps by remember { mutableStateOf(connection.amps) }
+    var voltage by remember { mutableStateOf(connection.voltage) }
+    var powerKW by remember { mutableStateOf(connection.powerKW) }
+    var currentType by remember { mutableStateOf(connection.currentType) }
+    var quantity by remember { mutableStateOf(connection.quantity) }
     var comments by remember { mutableStateOf(connection.comments) }
     var connectionType by remember { mutableStateOf(connection.connectionType) }
 
     Column {
         TextField(
-            value = id,
-            onValueChange = { id = it },
+            value = id.toString(),
+            onValueChange = { id = it.toInt() },
             label = { Text("Connection ID") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = reference,
+            value = reference.toString(),
             onValueChange = { reference = it },
             label = { Text("Reference (website)") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = amps,
-            onValueChange = { amps = it },
+            value = amps.toString(),
+            onValueChange = { amps = it.toInt() },
             label = { Text("Amps") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = voltage,
-            onValueChange = { voltage = it },
+            value = voltage.toString(),
+            onValueChange = { voltage = it.toInt() },
             label = { Text("Voltage") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = powerKW,
-            onValueChange = { powerKW = it },
+            value = powerKW.toString(),
+            onValueChange = { powerKW = it.toInt() },
             label = { Text("Power KW") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = currentType,
-            onValueChange = { currentType = it },
+            value = currentType.toString(),
+            onValueChange = { currentType = it.toInt() },
             label = { Text("Current Type") },
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = quantity,
-            onValueChange = { quantity = it },
+            value = quantity.toString(),
+            onValueChange = { quantity = it.toInt() },
             label = { Text("Quantity") },
             modifier = Modifier.fillMaxWidth()
         )

@@ -1,6 +1,0 @@
-{
-  "database": {
-    "baseName": "base name here",
-    "connectionString": "mongodb+srv://<username>:<password>@ep-cluster0...mongodb.net/?retryWrites=true&w=majority&appName=...-Cluster0"
-  }
-}
