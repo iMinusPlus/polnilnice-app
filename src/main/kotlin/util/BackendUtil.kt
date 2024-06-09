@@ -40,8 +40,8 @@ object BackendUtil {
 
     suspend fun postAddress(address: AddressDTO): String {
         try {
-            val res = postData("http://localhost:3000/address/app", address.toMap())
-            return res
+            val res = postData("http://elektropolnilnice.eu:3000/address/app", address.toMap())
+            return Json.decodeFromString<ResponseData>(res).message
         } catch (e: Exception) {
             println("Error: $e")
             return e.toString()
@@ -50,7 +50,7 @@ object BackendUtil {
 
     suspend fun postConnectionType(connType: ConnectionTypeDTO): String {
         try {
-            val res = postData("http://localhost:3000/connectiontype/app", connType.toMap())
+            val res = postData("http://elektropolnilnice.eu:3000/connectiontype/app", connType.toMap())
             return Json.decodeFromString<ResponseData>(res).message
         } catch (e: Exception) {
             println("Error: $e")
@@ -63,8 +63,8 @@ object BackendUtil {
             val resConnectionType = postConnectionType(connection.connectionType)
             val connectionMap = connection.toMap().toMutableMap()
             connectionMap["connectionType"] = resConnectionType
-            val res = postData("http://localhost:3000/connection/app", connectionMap.toMap())
-            return res
+            val res = postData("http://elektropolnilnice.eu:3000/connection/app", connectionMap.toMap())
+            return Json.decodeFromString<ResponseData>(res).message
         } catch (e: Exception) {
             println("Error: $e")
             return e.toString()
@@ -78,9 +78,9 @@ object BackendUtil {
             val stationMap = station.toMap().toMutableMap()
             stationMap["address"] = resAddress
             stationMap["connections"] = resConnections.toString()
-//            val res = postData("http://localhost:3000/station/app", stationMap.toMap())
-            println(stationMap)
-            return "res"
+            val res = postData("http://elektropolnilnice.eu:3000/elektroPolnilnice/app", stationMap.toMap())
+            println(res)
+            return res
         } catch (e: Exception) {
             println("Error: $e")
             return e.toString()

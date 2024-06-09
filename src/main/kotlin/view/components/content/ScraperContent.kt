@@ -48,8 +48,13 @@ fun ScraperContent() {
 
                 Button(onClick = {
                     GlobalScope.launch {
-                        BackendUtil.postStation(stations.value.first())
+                        if (stations.value.isEmpty()) return@launch
+                        stations.value.forEach {
+                            BackendUtil.postStation(it)
+                        }
+                        stations.value = emptyList()
                     }
+                    isLoading.value = true
                 }, enabled = hasLoaded.value) {
                     Text("Save")
                 }
@@ -154,7 +159,7 @@ fun StationCard(station: ChargingStationDTO, onStationChange: (ChargingStationDT
             // region Station fields
             Text("ID: ${station.id}")
             TextField(value = numberOfPoints.toString(), onValueChange = {
-                numberOfPoints = it.toInt()
+                numberOfPoints = if (it.isNotBlank()) it.toInt() else 0
                 onStationChange(
                     station.copy(
                         numberOfPoints = it.toInt()
