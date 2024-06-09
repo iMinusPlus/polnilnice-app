@@ -3,10 +3,8 @@ package view.components.content
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -27,14 +25,17 @@ import dto.charging_station.ChargingStationDTO
 import dto.charging_station.ConnectionDTO
 import dto.charging_station.ConnectionTypeDTO
 import dto.charging_station.enums.StationStatus
+import util.BackendUtil
 import java.time.LocalDate
 
 @Composable
 @Preview
 fun StationsContent() {
     var chargingStations = remember { mutableStateListOf<ChargingStationDTO>() }
+    var addresses = remember { mutableStateListOf<AddressDTO>() }
 
     LaunchedEffect(Unit) {
+        // region Mock data
         val mockConnection = ConnectionDTO(
             id = 1,
             connectionType = ConnectionTypeDTO(
@@ -114,6 +115,13 @@ fun StationsContent() {
                 mockStation2
             )
         )
+        // endregion
+
+        // region Real data
+        BackendUtil.getAddresses().forEach {
+            addresses.add(it)
+        }
+        // endregion
     }
 
     Box(
@@ -126,8 +134,11 @@ fun StationsContent() {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(200.dp),
                 content = {
-                    items(chargingStations.size) { index ->
-                        ChargingStationCard(chargingStations[index])
+//                    items(chargingStations.size) { index ->
+//                        ChargingStationCard(chargingStations[index])
+//                    }
+                    items(addresses.size) { index ->
+                        AddressCard(addresses[index])
                     }
                 }
             )
@@ -161,6 +172,35 @@ fun ChargingStationCard(chargingStation: ChargingStationDTO) {
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
             )
             Text(text = "${chargingStation.address.town}, ${chargingStation.address.country}")
+        }
+    }
+}
+
+@Composable
+@Preview
+fun AddressCard(address: AddressDTO) {
+    Box(
+        modifier = Modifier
+            .padding(10.dp)
+            .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
+            .padding(10.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                painter = painterResource("icons/EvCharger.svg"),
+                contentDescription = null,
+                modifier = Modifier.padding(20.dp).size(50.dp),
+                tint = Color(0xFF5c6cfa)
+            )
+            Text(
+                text = address.title,
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            )
+            Text(text = "${address.town}, ${address.country}")
         }
     }
 }

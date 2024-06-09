@@ -1,5 +1,7 @@
 package util
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dto.charging_station.AddressDTO
 import dto.charging_station.ChargingStationDTO
 import dto.charging_station.ConnectionDTO
@@ -85,5 +87,38 @@ object BackendUtil {
             println("Error: $e")
             return e.toString()
         }
+    }
+
+    suspend fun getAddresses(): List<AddressDTO> {
+        val response: String = client.get("http://elektropolnilnice.eu:3000/address")
+        val jsonElement = CustomJsonParser.parse(response)
+        val jsonObject = CustomJsonParser.convertJsonArrayToJsonObject(jsonElement.asJsonArray)
+
+        val list = mutableListOf<JsonObject>()
+        jsonObject.entrySet().forEach {
+            list.add(it.value.asJsonObject)
+        }
+        val addresses = mutableListOf<AddressDTO>()
+
+        list.forEach {
+            addresses.add(convertToAddress(it))
+        }
+        println(Gson().toJson(addresses))
+        return addresses
+    }
+
+    fun convertToAddress(from: JsonObject): AddressDTO {
+        val address = from.asJsonObject
+        println(address)
+        val addressObject = AddressDTO(
+            id = address.get("id").asInt,
+            country = address.get("country")?.asString ?: "default",
+            latitude = address.get("latitude").asString ?: "default",
+            longitude = address.get("longitude").asString ?: "default",
+            postcode = address.get("postcode").asString,
+            title = address.get("title").asString,
+            town = address.get("town").asString,
+        )
+        return addressObject
     }
 }
