@@ -13,7 +13,7 @@ import view.state.MenuState
 @Composable
 @Preview
 fun App() {
-    val menuState = remember { mutableStateOf(MenuState.CHARGING_STATIONS) }
+    val menuState = remember { mutableStateOf(MenuState.GENERATOR) }
     MaterialTheme {
         MainPage(menuState)
     }
