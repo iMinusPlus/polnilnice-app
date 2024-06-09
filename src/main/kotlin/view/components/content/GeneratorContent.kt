@@ -12,11 +12,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dto.charging_station.AddressDTO
 import io.github.serpro69.kfaker.Faker
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import util.BackendUtil
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.concurrent.schedule
 
+fun generateRandomCoordinates(): Pair<Double, Double> {
+    val latitude = 46 + ThreadLocalRandom.current().nextDouble()
+    val longitude = 15 + ThreadLocalRandom.current().nextDouble()
+    return Pair(latitude, longitude)
+}
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 @Preview
 fun GeneratorContent() {
@@ -48,7 +60,7 @@ fun GeneratorContent() {
                         onValueChange = { newValue ->
                             sliderValue.value = newValue
                         },
-                        valueRange = 0f..100f
+                        valueRange = 0f..10f
                     )
                     Text("Generate: ${sliderValue.value.toInt()} addresses")
                 }
@@ -56,7 +68,20 @@ fun GeneratorContent() {
                     onClick = {
                         val faker = Faker()
                         for (i in 0 until sliderValue.value.toInt()) {
-                            println(faker.address.fullAddress())
+                            val (latitude, longitude) = generateRandomCoordinates()
+                            val randomInt = ThreadLocalRandom.current().nextInt(100000)
+                            val address = AddressDTO(
+                                id = randomInt,
+                                title = faker.address.streetName(),
+                                town = faker.address.city(),
+                                postcode = faker.address.postcode(),
+                                country = faker.address.country(),
+                                latitude = latitude.toString(),
+                                longitude = longitude.toString()
+                            )
+                            GlobalScope.launch {
+                                BackendUtil.postAddress(address)
+                            }
                         }
                         generated.value = true
                     },
