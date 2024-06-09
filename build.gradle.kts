@@ -28,6 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-client-json:1.6.7")
     implementation("io.ktor:ktor-client-serialization:1.6.7")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("io.github.serpro69:kotlin-faker:2.0.0-rc.4")
 
     // Kotlin coroutine dependency
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
