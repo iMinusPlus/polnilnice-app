@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.5.10"
     id("org.jetbrains.compose")
 }
 
@@ -30,9 +31,7 @@ dependencies {
 
     // Kotlin coroutine dependency
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-
-    // MongoDB Kotlin driver dependency
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
     testImplementation(kotlin("test"))
 }

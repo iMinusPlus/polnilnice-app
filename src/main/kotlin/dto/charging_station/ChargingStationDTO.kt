@@ -18,4 +18,23 @@ data class ChargingStationDTO(
     var statusType: StationStatus,
     var dateLastConfirmed: LocalDate,
     var comments: String
-)
+) {
+    fun toMap(): Map<String, String> {
+        return mapOf(
+            "id" to id.toString(),
+            "dateLastVerified" to dateLastVerified.toString(),
+            "UUID" to UUID.toString(),
+            "dataProviderID" to dataProviderID.toString(),
+            "usageCost" to usageCost,
+            "usageTypeID" to usageTypeID.toString(),
+            "address" to "",
+            "connections" to "",
+            "dateCreated" to dateCreated.toString(),
+            "dateAddedToOurApp" to dateAddedToOurApp.toString(),
+            "numberOfPoints" to numberOfPoints.toString(),
+            "statusType" to statusType.toString(),
+            "dateLastConfirmed" to dateLastConfirmed.toString(),
+            "comments" to comments
+        )
+    }
+}

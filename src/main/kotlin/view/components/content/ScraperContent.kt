@@ -17,9 +17,11 @@ import dto.charging_station.ConnectionTypeDTO
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import util.BackendUtil
 import util.Scraper.scrapeFromDDD
 import util.Scraper.scrapeFromOpenChargeAPI
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 @Preview
 fun ScraperContent() {
@@ -44,7 +46,11 @@ fun ScraperContent() {
 
                 Spacer(modifier = Modifier.width(16.dp)) // Add some space between the dropdown and the button
 
-                Button(onClick = { println(stations) }, enabled = hasLoaded.value) {
+                Button(onClick = {
+                    GlobalScope.launch {
+                        BackendUtil.postStation(stations.value.first())
+                    }
+                }, enabled = hasLoaded.value) {
                     Text("Save")
                 }
             }
@@ -62,7 +68,6 @@ fun ScraperContent() {
                             }
                         }
                     }
-                    println(stations)
                 }
                 hasLoaded.value = true
             }
@@ -278,7 +283,7 @@ fun ConnectionCard(connection: ConnectionDTO, onConnectionChange: (ConnectionDTO
     var currentType by remember { mutableStateOf(connection.currentType) }
     var quantity by remember { mutableStateOf(connection.quantity) }
     var comments by remember { mutableStateOf(connection.comments) }
-    var connectionType by remember { mutableStateOf(connection.connectionType) }
+    val connectionType by remember { mutableStateOf(connection.connectionType) }
 
     Column {
         TextField(value = id.toString(), onValueChange = {
@@ -363,17 +368,17 @@ fun ConnectionCard(connection: ConnectionDTO, onConnectionChange: (ConnectionDTO
 @Composable
 fun ConnectionTypeCard(connectionType: ConnectionTypeDTO, onConnectionTypeChange: (ConnectionTypeDTO) -> Unit) {
     var name by remember { mutableStateOf(connectionType.name) }
-    var discontinued by remember { mutableStateOf(connectionType.discontinued.toString()) }
-    var obsolete by remember { mutableStateOf(connectionType.obsolete.toString()) }
+    var discontinued by remember { mutableStateOf(connectionType.discontinued) }
+    var obsolete by remember { mutableStateOf(connectionType.obsolete) }
     var title by remember { mutableStateOf(connectionType.title) }
 
     Box(modifier = Modifier.fillMaxWidth().padding(1.dp).border(1.dp, Color.Black)) {
         Column {
             Row {
                 TextField(
-                    value = connectionType.name,
+                    value = name,
                     onValueChange = {
-                        connectionType.name = it
+                        name = it
                         onConnectionTypeChange(
                             connectionType.copy(
                                 name = it
@@ -384,9 +389,9 @@ fun ConnectionTypeCard(connectionType: ConnectionTypeDTO, onConnectionTypeChange
                     modifier = Modifier.weight(1f)
                 )
                 TextField(
-                    value = connectionType.discontinued.toString(),
+                    value = discontinued.toString(),
                     onValueChange = {
-                        connectionType.discontinued = it.toBoolean()
+                        discontinued = it.toBoolean()
                         onConnectionTypeChange(
                             connectionType.copy(
                                 discontinued = it.toBoolean()
@@ -399,9 +404,9 @@ fun ConnectionTypeCard(connectionType: ConnectionTypeDTO, onConnectionTypeChange
             }
             Row {
                 TextField(
-                    value = connectionType.obsolete.toString(),
+                    value = obsolete.toString(),
                     onValueChange = {
-                        connectionType.obsolete = it.toBoolean()
+                        obsolete = it.toBoolean()
                         onConnectionTypeChange(
                             connectionType.copy(
                                 obsolete = it.toBoolean()
@@ -412,9 +417,9 @@ fun ConnectionTypeCard(connectionType: ConnectionTypeDTO, onConnectionTypeChange
                     modifier = Modifier.weight(1f)
                 )
                 TextField(
-                    value = connectionType.title,
+                    value = title,
                     onValueChange = {
-                        connectionType.title = it
+                        title = it
                         onConnectionTypeChange(
                             connectionType.copy(
                                 title = it
