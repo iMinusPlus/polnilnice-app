@@ -109,7 +109,6 @@ object BackendUtil {
 
     fun convertToAddress(from: JsonObject): AddressDTO {
         val address = from.asJsonObject
-        println(address)
         val addressObject = AddressDTO(
             id = address.get("id").asInt,
             country = address.get("country")?.asString ?: "default",
