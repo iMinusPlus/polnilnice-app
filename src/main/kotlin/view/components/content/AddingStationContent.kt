@@ -2,14 +2,13 @@ package view.components.content
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import dto.charging_station.enums.StationStatus
+import view.components.CustomTextField
 
 @Composable
 @Preview
@@ -18,7 +17,6 @@ fun AddingStationContent() {
     var address = remember { mutableStateOf("") }
 
     val statusOptions = listOf(StationStatus.FREE, StationStatus.IN_USAGE, StationStatus.IN_REPAIR)
-//    var status = remember { mutableStateOf("") }
     var status by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
@@ -64,14 +62,4 @@ fun AddingStationContent() {
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun CustomTextField(state: MutableState<String>, placeholder: String) {
-    TextField(
-        value = state.value,
-        onValueChange = { state.value = it },
-        shape = RoundedCornerShape(12.dp),
-        placeholder = { Text(placeholder) })
 }

@@ -7,6 +7,9 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 object UserUtil {
@@ -20,7 +23,17 @@ object UserUtil {
         }
     }
 
-    //Todo preizkus
+    suspend fun postUser(user: UserDTO): Boolean {
+        try {
+            val response = BackendUtil.postData("http://52.174.127.46:3000/users", user.toMap())
+
+//        println("Response: $response")
+            return true
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
     suspend fun getAllUsers(): MutableList<UserDTO> {
         val response: String = client.get("http://52.174.127.46:3000/users")
         val jsonElement = CustomJsonParser.parse(response)
