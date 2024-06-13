@@ -50,6 +50,18 @@ object BackendUtil {
         }
     }
 
+    suspend fun postRemoveAddress(address: AddressDTO): String {
+        try {
+            val res = postData("http://elektropolnilnice.eu:3000/address/app/remove", address.toMap())
+            return Json.decodeFromString<ResponseData>(res).message
+        } catch (e: Exception) {
+            println("Error: $e")
+            return e.toString()
+        }
+    }
+
+
+
     suspend fun postConnectionType(connType: ConnectionTypeDTO): String {
         try {
             val res = postData("http://elektropolnilnice.eu:3000/connectiontype/app", connType.toMap())

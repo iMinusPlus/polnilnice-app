@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -22,11 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dto.charging_station.AddressDTO
 import dto.charging_station.ChargingStationDTO
-import dto.charging_station.ConnectionDTO
-import dto.charging_station.ConnectionTypeDTO
-import dto.charging_station.enums.StationStatus
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import util.BackendUtil
-import java.time.LocalDate
 
 @Composable
 @Preview
@@ -35,113 +33,50 @@ fun StationsContent() {
     var addresses = remember { mutableStateListOf<AddressDTO>() }
 
     LaunchedEffect(Unit) {
-        // region Mock data
-        val mockConnection = ConnectionDTO(
-            id = 1,
-            connectionType = ConnectionTypeDTO(
-                id = 1,
-                name = "Connection Type 1",
-                discontinued = true,
-                obsolete = false,
-                title = "ConnectionTitle"
-            ),
-            amps = 1,
-            reference = "reference",
-            voltage = 321,
-            powerKW = 31,
-            currentType = 1,
-            quantity = 3,
-            comments = "comments"
-        )
-
-        val mockConnections = listOf(mockConnection)
-        val mockStation1 = ChargingStationDTO(
-            id = 1,
-            dataProviderID = 1,
-            usageCost = "test",
-            usageTypeID = 1,
-            address = AddressDTO(
-                id = 1,
-                title = "FERI polnilnica",
-                town = "Maribor",
-                postcode = "2000",
-                country = "SLovenija",
-                latitude = "test",
-                longitude = "test"
-            ),
-            connections = mockConnections,
-            dateCreated = LocalDate.now(),
-            numberOfPoints = 1,
-            statusType = StationStatus.FREE,
-            dateLastVerified = LocalDate.now(),
-            dateLastConfirmed = LocalDate.now(),
-            UUID = "test",
-            dateAddedToOurApp = LocalDate.now(),
-            comments = "test"
-        )
-        val mockStation2 = ChargingStationDTO(
-            id = 1,
-            dataProviderID = 1,
-            usageCost = "test2",
-            usageTypeID = 1,
-            address = AddressDTO(
-                id = 1,
-                title = "title",
-                town = "town",
-                postcode = "2000",
-                country = "slovenija",
-                latitude = "ads",
-                longitude = "test"
-            ),
-            connections = mockConnections,
-            dateCreated = LocalDate.now(),
-            numberOfPoints = 1,
-            statusType = StationStatus.FREE,
-            dateLastConfirmed = LocalDate.now(),
-            dateLastVerified = LocalDate.now(),
-            UUID = "test",
-            dateAddedToOurApp = LocalDate.now(),
-            comments = "test"
-        )
-
-        chargingStations.clear()
-        chargingStations.addAll(
-            listOf(
-                mockStation1,
-                mockStation2,
-                mockStation1,
-                mockStation2,
-                mockStation1,
-                mockStation2
-            )
-        )
-        // endregion
-
-        // region Real data
         BackendUtil.getAddresses().forEach {
             addresses.add(it)
         }
-        // endregion
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp),
-                content = {
-//                    items(chargingStations.size) { index ->
-//                        ChargingStationCard(chargingStations[index])
-//                    }
-                    items(addresses.size) { index ->
-                        AddressCard(addresses[index])
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Stations") },
+                actions = {
+                    IconButton(onClick = {
+                        // Clear old data
+                        chargingStations.clear()
+                        addresses.clear()
+
+                        GlobalScope.launch {
+                            BackendUtil.getAddresses().forEach {
+                                addresses.add(it)
+                            }
+                        }
+                    }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
                     }
                 }
             )
+        }
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(200.dp),
+                    content = {
+                        items(addresses.size) { index ->
+                            AddressCard(addresses[index])
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -176,15 +111,16 @@ fun ChargingStationCard(chargingStation: ChargingStationDTO) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class, DelicateCoroutinesApi::class)
 @Composable
 @Preview
 fun AddressCard(address: AddressDTO) {
+    var isEnabeled by remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
             .padding(10.dp)
             .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
             .padding(10.dp)
-            .fillMaxWidth()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -200,7 +136,34 @@ fun AddressCard(address: AddressDTO) {
                 text = address.title,
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
             )
-            Text(text = "${address.town}, ${address.country}")
+            Text(text = "ID: ${address.id}", style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 9.sp))
+            Text(
+                text = "Latitude: ${address.latitude}",
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            )
+            Text(
+                text = "Longitude: ${address.longitude}",
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 13.sp)
+            )
+            Text(text = "${address.town} - ${address.country}")
+
+            Button(onClick = {
+                isEnabeled = false
+                GlobalScope.launch {
+                    val newAddress = AddressDTO(
+                        id = address.id,
+                        country = address.country,
+                        town = address.town,
+                        postcode = address.postcode,
+                        title = address.title,
+                        latitude = address.latitude,
+                        longitude = address.longitude
+                    )
+                    BackendUtil.postRemoveAddress(newAddress)
+                }
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red), enabled = isEnabeled) {
+                Text("Delete")
+            }
         }
     }
 }
