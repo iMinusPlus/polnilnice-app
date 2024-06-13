@@ -69,7 +69,7 @@ fun StationsContent() {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(200.dp),
+                    columns = GridCells.Adaptive(260.dp),
                     content = {
                         items(addresses.size) { index ->
                             AddressCard(addresses[index])
@@ -118,6 +118,8 @@ fun AddressCard(address: AddressDTO) {
     var isEnabeled by remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
+            .height(300.dp)
+            .width(300.dp)
             .padding(10.dp)
             .border(width = 1.dp, color = Color(0xFFd1cdcd), shape = RoundedCornerShape(5.dp))
             .padding(10.dp)
