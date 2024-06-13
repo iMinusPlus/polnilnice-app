@@ -150,16 +150,7 @@ fun AddressCard(address: AddressDTO) {
             Button(onClick = {
                 isEnabeled = false
                 GlobalScope.launch {
-                    val newAddress = AddressDTO(
-                        id = address.id,
-                        country = address.country,
-                        town = address.town,
-                        postcode = address.postcode,
-                        title = address.title,
-                        latitude = address.latitude,
-                        longitude = address.longitude
-                    )
-                    BackendUtil.postRemoveAddress(newAddress)
+                    BackendUtil.postRemoveAddress(address)
                 }
             }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red), enabled = isEnabeled) {
                 Text("Delete")
