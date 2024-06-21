@@ -20,7 +20,24 @@ object UserUtil {
         }
     }
 
-    //Todo preizkus
+    suspend fun postUser(user: UserDTO): Boolean {
+        try {
+            val response = BackendUtil.postData("http://52.174.127.46:3000/users", user.toMap())
+            return true
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
+    suspend fun postRemoveUser(user: UserDTO): Boolean {
+        try {
+            val response = BackendUtil.postData("http://52.174.127.46:3000/users/remove", user.toMap())
+            return true
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
     suspend fun getAllUsers(): MutableList<UserDTO> {
         val response: String = client.get("http://52.174.127.46:3000/users")
         val jsonElement = CustomJsonParser.parse(response)

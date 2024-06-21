@@ -6,14 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dto.user.UserDTO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import util.UserUtil
 
@@ -38,21 +37,43 @@ fun UsersContent() {
         }
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(200.dp),
-                content = {
-                    items(users.size) { i ->
-                        UserCard(users[i])
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Stations") },
+                actions = {
+                    IconButton(onClick = {
+                        // Clear old data
+                        users.clear()
+
+                        GlobalScope.launch {
+                            val fetchedUsers = UserUtil.getAllUsers()
+                            users.clear()
+                            users.addAll(fetchedUsers)
+                        }
+                    }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
                     }
                 }
             )
+        }
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(200.dp),
+                    content = {
+                        items(users.size) { i ->
+                            UserCard(users[i])
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -60,6 +81,7 @@ fun UsersContent() {
 @Composable
 @Preview
 fun UserCard(user: UserDTO) {
+    var isEnabeled by remember { mutableStateOf(true) }
     Box(
         modifier = Modifier
             .height(300.dp)
@@ -84,6 +106,15 @@ fun UserCard(user: UserDTO) {
                 style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
             )
             Text(text = "${user.username}, ${user.email}")
+
+            Button(onClick = {
+                isEnabeled = false
+                GlobalScope.launch {
+                    UserUtil.postRemoveUser(user)
+                }
+            }, colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red), enabled = isEnabeled) {
+                Text("Delete")
+            }
         }
     }
 }

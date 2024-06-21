@@ -1,16 +1,23 @@
 package dto.charging_station
 
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
-
 data class AddressDTO(
-    @BsonId
-    val _id: ObjectId = ObjectId(), //objectId is for mongodb
-    val id: Int, //id is from openchargemap
-    val title: String,
-    val town: String,
-    val postcode: String,
-    val country: String,
-    val latitude: String,
-    val longitude: String
-)
+    var id: Int, //id is from openchargemap
+    var title: String,
+    var town: String?,
+    var postcode: String,
+    var country: String,
+    var latitude: String,
+    var longitude: String
+) {
+    fun toMap(): Map<String, String> {
+        return mapOf(
+            "id" to id.toString(),
+            "title" to title,
+            "town" to town.toString(),
+            "postcode" to postcode,
+            "country" to country,
+            "latitude" to latitude,
+            "longitude" to longitude
+        )
+    }
+}
